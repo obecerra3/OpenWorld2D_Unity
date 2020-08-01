@@ -1,7 +1,7 @@
 # Terrain2D_Unity
 Terrain Generation in Unity using 3D aspects for a top down 2D world. 
 
-![Alt_Text](https://giphy.com/gifs/f3kAOgAv7jfBqgYnui)
+![Alt_Text](https://media.giphy.com/media/f3kAOgAv7jfBqgYnui/giphy.gif)
 
 # Features
 
