@@ -1,8 +1,7 @@
-public enum Notifications
-{
+public enum Notifications {
     //Player
     PLAYER_POS_CHANGED,
-    
+
     //InputHandler
     ANYTHING_PRESSED,
     CONTINUE_PRESSED,
@@ -13,6 +12,4 @@ public enum Notifications
 
     //Keyboard Input
     SPACE_PRESSED,
-
-
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static TilemapEngine;
+using static TilemapManager;
 using static Notifications;
 using static Storage;
 
@@ -11,22 +11,22 @@ public class World : Event
 {
     public World()
     {
-        TilemapEngine.initialize();
+        TilemapManager.initialize();
     }
 
     public override void load()
     {
-        TilemapEngine.load();
+        TilemapManager.load();
     }
 
     public override void render()
     {
-        TilemapEngine.render();
+        TilemapManager.render();
     }
 
     public override void hide()
     {
-        TilemapEngine.hide();
+        TilemapManager.hide();
     }
 
     public override void enable()
@@ -39,12 +39,12 @@ public class World : Event
 
     }
 
-    public override void onNotify(Notifications _notification, List<object> _data)
+    public override void onNotify(Notifications notification, List<object> data)
     {
-        switch (_notification)
+        switch (notification)
         {
             case PLAYER_POS_CHANGED:
-                TilemapEngine.checkPlayerPosition((Vector2Int) _data[0]);
+                TilemapManager.checkPlayerPosition((Vector2Int) data[0]);
                 break;
         }
     }

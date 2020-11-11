@@ -5,17 +5,14 @@ using UnityEngine.Tilemaps;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using static TilemapEngine;
 
 //Specifically creates features that allow a understanding of the ground/ elevation/ levels.
 
-public class TerrainTile : Tile
-{
+public class TerrainTile : Tile {
     //==================
     // Initialization
     //==================
-    public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go)
-    {
+    public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go) {
         return true;
     }
 
@@ -24,8 +21,7 @@ public class TerrainTile : Tile
     //==================
     //Returns the correct sprite according to orthogonally and diagonally adjacent Custom tiles
     //also should decide what to do according to height.
-    public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
-    {
+    public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData) {
         int mask = HasTerrainTile(tilemap, location + new Vector3Int(0, 1, 0)) ? 1 : 0; //top
         mask += HasTerrainTile(tilemap, location + new Vector3Int(1, 0, 0)) ? 2 : 0; //right
         mask += HasTerrainTile(tilemap, location + new Vector3Int(0, -1, 0)) ? 4 : 0; //bottom
@@ -38,30 +34,24 @@ public class TerrainTile : Tile
 
         int index = GetIndex((byte) mask, (byte) mask2);
 
-        if (index >= 0 && index < all_sprites.Length)
-        {
-            tileData.sprite = all_sprites[index];
+        if (index >= 0 && index < TilemapManager.all_sprites.Length) {
+            tileData.sprite = TilemapManager.all_sprites[index];
             tileData.color = Color.white;
             tileData.flags = TileFlags.LockTransform;
             tileData.colliderType = ColliderType.None;
-        }
-        else
-        {
+        } else {
             Debug.Log("Error index not valid for TerrainTile and index: " + index);
         }
     }
 
     // The following determines which sprite to use based on the number of adjacent TerrainTiles
-    private int GetIndex(byte mask, byte mask2)
-    {
-        switch (mask)
-        {
+    private int GetIndex(byte mask, byte mask2) {
+        switch (mask) {
             case 3: //top and right
                 return 51; //left bottom corner edge
             case 6: //right and bottom
                 return 11; //top left corner
-            case 7:
-                //top, right, bottom
+            case 7: //top, right, bottom
                 return (int) Utils.weightedRange(new float[] { 31, 31, 1, 96, 96, 1 }); //left side edge
             case 9: //left and top
                 return 56;
@@ -75,8 +65,7 @@ public class TerrainTile : Tile
             case 14: //right, left, bottom
                 return Random.Range(12, 16);
             case 15: //top, right, left, bottom
-                switch (mask2)
-                {
+                switch (mask2) {
                     case 11: //bottom_right empty
                         return 57; //white
                         // return 37; //rock
@@ -90,12 +79,11 @@ public class TerrainTile : Tile
                 }
                 return 0;
         }
-        return 2;;
+        return 2;
     }
 
     // The following determines which rotation to use based on the positions of adjacent TerrainTiles
-    private Quaternion GetRotation(byte mask)
-    {
+    private Quaternion GetRotation(byte mask) {
         // switch (mask)
         // {
         // }
@@ -106,12 +94,10 @@ public class TerrainTile : Tile
     //==============
     // Refresh
     //==============
-    public override void RefreshTile(Vector3Int location, ITilemap tilemap)
-    {
+    public override void RefreshTile(Vector3Int location, ITilemap tilemap) {
         // refreshes itself and other Custom tiles that are orthogonally and diagonally adjacent
         for (int yd = -1; yd <= 1; yd++)
-            for (int xd = -1; xd <= 1; xd++)
-            {
+            for (int xd = -1; xd <= 1; xd++) {
                 Vector3Int position = new Vector3Int(location.x + xd, location.y + yd, location.z);
                 if (HasTerrainTile(tilemap, position))
                     tilemap.RefreshTile(position);
@@ -121,8 +107,7 @@ public class TerrainTile : Tile
     //==============================
     //Check Tilemap for TerrainTile
     //==============================
-    private bool HasTerrainTile(ITilemap tilemap, Vector3Int position)
-    {
+    private bool HasTerrainTile(ITilemap tilemap, Vector3Int position) {
         return tilemap.GetTile(position) == this;
     }
 
@@ -131,8 +116,7 @@ public class TerrainTile : Tile
     //==============
     #if UNITY_EDITOR
         [MenuItem("Assets/Create/TerrainTile")]
-        public static void CreateRoadTile()
-        {
+        public static void CreateRoadTile() {
             string path = EditorUtility.SaveFilePanelInProject("Save Terrain Tile", "New Terrain Tile", "Asset", "Save Terrain Tile", "Assets");
             if (path == "")
                 return;

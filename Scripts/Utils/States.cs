@@ -1,14 +1,13 @@
 //State for an event
-public enum States
-{
-    //Event
+public enum States {
+    // Event
     RENDER,
     DRAW,
     ACTIVE,
     HIDE,
     EXPIRED,
 
-    //Title Screen
+    // Title Screen
     COMPANY_INTRO,
     INTRO,
     TITLE,
@@ -16,19 +15,24 @@ public enum States
     TUTORIAL,
     SETTINGS,
 
-    //Game Screen
+    // Game Screen
     IN_GAME,
     IN_DIALOGUE,
     PAUSED,
 
-    //Player
+    // Player
     IDLE,
     WALK,
     RUN,
-    INAIR,
+    IN_AIR,
     LAND,
     ROLL,
     SLIDE,
     NULL_STATE,
+
+    // General Object Status
+    ON_FIRE,
+    FROZEN,
+    SHAKE,
 
 }

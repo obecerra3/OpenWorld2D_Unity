@@ -1,8 +1,6 @@
-namespace Structs
-{
+namespace Structs {
     [System.Serializable]
-    public struct PlayerSave
-    {
+    public struct PlayerSave {
         public string name;
         public SerializableVector3 position;
         public int health;

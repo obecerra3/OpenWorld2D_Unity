@@ -1,23 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
-// using static System.Math;
 using UnityEngine;
 using System.Linq;
 
-public static class Utils
-{
-    private static int perlin_seed = 69;
+public static class Utils {
+
+    private static int perlin_seed = 42;
+    private static Dictionary<int, string> hash_ids = new Dictionary<int, string>();
+
+    //==================================
+    //  Hash string ID
+    //==================================
+
+    public static int getID(string s) {
+        // check if ID exists
+        foreach(KeyValuePair<int, string> kvp in hash_ids) {
+            if (kvp.Value == s) {
+                return kvp.Key;
+            }
+        }
+        // if not generate hash
+        int hash = s.GetHashCode();
+        const int MAX_STEPS = 100;
+        for (int i = 0; i < MAX_STEPS; i++) {
+            try {
+                hash_ids.Add(hash, s);
+                // Debug.Log("Hash found! s: " + s + " , hash: " + hash);
+                return hash;
+            } catch(System.ArgumentException) {
+                Debug.Log("Hash collision for s: " + s + " , hash: " + hash);
+                hash++;
+            }
+        }
+
+        throw new HashMaxCollisionsException("Exception in Utils.cs getID");
+    }
 
     //==================================
     //  PROCEDURAL CONTENT GENERATION
     //==================================
-    public static float noise(float x, float y, float frequency = 1, int octaves = 1, float multiplier = 15f, float amplitude = 1f, float lacunarity = 2, float persistence = 0.25f)
-    {
+    public static float noise(float x, float y, float frequency = 1, int octaves = 1, float multiplier = 15f, float amplitude = 1f, float lacunarity = 2, float persistence = 0.25f) {
         //convert v2 values into floating point
         Vector2 v2 = new Vector2((x / multiplier) + 0.1f,(y / multiplier) + 0.1f) * frequency;
         float value = 0;
-        for (int n = 0; n < octaves; n++)
-        {
+
+        for (int n = 0; n < octaves; n++) {
             value += Mathf.PerlinNoise(v2.x + perlin_seed, v2.y + perlin_seed) * amplitude;
             v2 *= lacunarity;
             amplitude *= persistence;
@@ -25,13 +52,25 @@ public static class Utils
         return (float) System.Math.Round(value, 2);
     }
 
-    public static float weightedRange(float[] w_range)
-    {
+    public static float seedNoise(float seed, float x, float y, float frequency = 1, int octaves = 1, float multiplier = 15f, float amplitude = 1f, float lacunarity = 2, float persistence = 0.25f) {
+        //convert v2 values into floating point
+        Vector2 v2 = new Vector2((x / multiplier) + 0.1f,(y / multiplier) + 0.1f) * frequency;
+        float value = 0;
+
+        for (int n = 0; n < octaves; n++) {
+            value += Mathf.PerlinNoise(v2.x + seed, v2.y + seed) * amplitude;
+            v2 *= lacunarity;
+            amplitude *= persistence;
+        }
+        return (float) System.Math.Round(value, 2);
+    }
+
+    public static float weightedRange(float[] w_range) {
+
         List<float> return_values = new List<float>();
-        for (int i = 0; i < w_range.Length - 2; i += 3)
-        {
-            for (int j = 0; j < w_range[i + 2]; j++)
-            {
+
+        for (int i = 0; i < w_range.Length - 2; i += 3) {
+            for (int j = 0; j < w_range[i + 2]; j++) {
                 return_values.Add(Random.Range(w_range[i], w_range[i + 1]));
             }
         }
@@ -218,5 +257,8 @@ public static class Utils
     {
         printList<Sprite>(values.ToList());
     }
+}
 
+class HashMaxCollisionsException : System.Exception {
+    public HashMaxCollisionsException(string message) {}
 }
