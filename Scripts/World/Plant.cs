@@ -12,18 +12,19 @@ namespace Plant {
         public int width;
         public int height;
         public int types;
-        public float split_ratio;
-        public int[] sprt_ind;
-        public float[] sprt_probs;
-        public List<Sprite> sprts = new List<Sprite>();
+        public int[] sprite_indices;
+        public float[] sprite_probs;
         public List<GameObject> objs = new List<GameObject>();
         public GameObject physics_obj;
         public bool is_tile;
         public bool is_stack;
+        public bool merge_sprite;
         public float shake_delta = 1.0f;
         public float shake_freq = 2.0f;
         public bool rotate_around = true;
         public bool can_shake = false;
+        public bool can_bounce = false;
+        public float bounce_delta = 0.25f;
 
         // noise
         public int[] noise_seeds;
@@ -31,23 +32,28 @@ namespace Plant {
         public float[] min_vals;
         public float[] spawn_probs;
 
-        public PlantStage(int w, int h, int t, float splt_r, int[] sprt_i, float[] sprt_ps, bool is_t = false, bool is_stck = false) {
+        public PlantStage(int w, int h, int ts, int[] sprt_i, float[] sprt_ps, bool is_tl = false, bool is_stck = false, bool mrge_sprt = false) {
             width = w;
             height = h;
-            types = t;
-            split_ratio = splt_r;
-            sprt_ind = sprt_i;
-            sprt_probs = sprt_ps;
-            is_tile = is_t;
+            types = ts;
+            sprite_indices = sprt_i;
+            sprite_probs = sprt_ps;
+            is_tile = is_tl;
             is_stack = is_stck;
+            merge_sprite = mrge_sprt;
             initSprts();
         }
 
-        public void initShake(float shk_delta = 1.0f, float shk_freq = 2.0f, bool rte_arnd = true, bool cn_shk = true) {
+        public void initShake(float shk_delta = 1.0f, float shk_freq = 2.0f, bool rte_arnd = true) {
+            can_shake = true;
             shake_delta = shk_delta;
             shake_freq = shk_freq;
             rotate_around = rte_arnd;
-            can_shake = cn_shk;
+        }
+
+        public void initBounce(float bnc_delta = 0.25f) {
+            can_bounce = true;
+            bounce_delta = bnc_delta;
         }
 
         public void initPhysics() {
@@ -122,27 +128,43 @@ namespace Plant {
                 GameObject parent_obj = new GameObject();
                 parent_obj.name = "Type" + t;
                 objs.Add(parent_obj);
-                // per height create a game object
-                for (int h = 0; h < height; ++h) {
-                    GameObject h_obj = new GameObject("Height" + h);
-                    h_obj.transform.parent = parent_obj.transform;
-                    // per width create a game object with a SpriteRenderer
-                    for (int w = 0; w < width; ++w) {
-                        GameObject w_obj = new GameObject("Width" + w);
-                        w_obj.transform.parent = h_obj.transform;
-                        SpriteRenderer sr = w_obj.AddComponent<SpriteRenderer>();
-                        sr.sortingLayerName = (h == 0) ? (is_tile) ? "Tile" : "Objects" : "Objects1";
-                        sr.sprite = TilemapManager.all_sprites[sprt_ind[curr_sprt_i]];
-                        w_obj.transform.position += Vector3.up * (h);
-                        w_obj.transform.position += Vector3.right * w;
 
-                        if (width >= 2) w_obj.transform.position += Vector3.left * width * 0.25f;
+                if (merge_sprite) {
+                    // Sprite.create to merge the sprites assuming sprite_indices hold
+                    // the bottom left corner of the sprites to merge
+                    int index = sprite_indices[t];
+                    int i = index % 20;
+                    int j = (10 - (index / 20)) - 1;
 
-                        curr_sprt_i++;
+                    SpriteRenderer sr = parent_obj.AddComponent<SpriteRenderer>();
+                    sr.sprite = Sprite.Create(src, new Rect(i * 24f, j * 24f, 24f * width, 24f * height), new Vector2(0.5f, 0.5f), 24.0f);
+                    int h = 0;
+                    sr.sortingLayerName = (h == 0) ? (is_tile) ? "Tile" : "Objects" : "Objects1";
+                } else {
+                    // per height create a game object
+                    for (int h = 0; h < height; ++h) {
+                        GameObject h_obj = new GameObject("Height" + h);
+                        h_obj.transform.parent = parent_obj.transform;
+                        // per width create a game object with a SpriteRenderer
+                        for (int w = 0; w < width; ++w) {
+                            GameObject w_obj = new GameObject("Width" + w);
+                            w_obj.transform.parent = h_obj.transform;
+                            SpriteRenderer sr = w_obj.AddComponent<SpriteRenderer>();
+                            sr.sortingLayerName = (h == 0) ? (is_tile) ? "Tile" : "Objects" : "Objects1";
+                            sr.sprite = TilemapManager.all_sprites[sprite_indices[curr_sprt_i]];
+                            w_obj.transform.position += Vector3.up * (h);
+                            w_obj.transform.position += Vector3.right * w;
+
+                            if (width >= 2) w_obj.transform.position += Vector3.left * width * 0.25f;
+
+                            curr_sprt_i++;
+                        }
                     }
                 }
             }
         }
+
+
     }
 
     public class PlantObj : MonoEvent {
@@ -157,9 +179,12 @@ namespace Plant {
         public float shake_freq;
         public bool rotate_around;
         public bool can_shake;
+        public bool can_bounce;
+        public float bounce_delta;
 
         private GameObject stage_obj;
         private float shake_time;
+        private float bounce_time;
         private Vector3 shake_start_pos;
 
         public void Init(string s) {
@@ -178,11 +203,34 @@ namespace Plant {
         }
 
         public void shake() {
-            if (can_shake && state != SHAKE) {
+            if (can_shake && state != SHAKE && state != BOUNCE) {
                 state = SHAKE;
                 shake_time = 2 * Mathf.PI;
                 shake_start_pos = transform.position;
             }
+        }
+
+        public void resetShake() {
+            stage_obj.transform.eulerAngles = Vector3.zero;
+            stage_obj.transform.position = shake_start_pos;
+            state = IDLE;
+        }
+
+        public bool bounce() {
+            if (can_bounce) {
+                if (state == SHAKE) {
+                    resetShake();
+                }
+                bounce_time = 2 * Mathf.PI;
+                state = BOUNCE;
+                return true;
+            }
+            return false;
+        }
+
+        public void resetBounce() {
+            stage_obj.transform.localScale = Vector3.one;
+            state = IDLE;
         }
 
         public void FixedUpdate() {
@@ -199,9 +247,15 @@ namespace Plant {
                         }
                         shake_time -= 0.1f;
                     } else {
-                        stage_obj.transform.eulerAngles = Vector3.zero;
-                        stage_obj.transform.position = shake_start_pos;
-                        state = IDLE;
+                        resetShake();
+                    }
+                    break;
+                case (BOUNCE):
+                    if (bounce_time > 0) {
+                        stage_obj.transform.localScale = Vector3.one + Vector3.up * (Mathf.Cos(bounce_time) * 0.5f * bounce_delta);
+                        bounce_time -= 0.1f;
+                    } else {
+                        resetBounce();
                     }
                     break;
             }
@@ -248,12 +302,14 @@ namespace Plant {
                 obj.SetActive(true);
                 PlantObj plant_obj = obj.GetComponent<PlantObj>();
 
-                // set shake data
+                // set shake/bounce data
                 PlantStage plant_stage = stages[stage_index];
-                plant_obj.rotate_around = plant_stage.rotate_around;
                 plant_obj.can_shake = plant_stage.can_shake;
+                plant_obj.rotate_around = plant_stage.rotate_around;
                 plant_obj.shake_delta = plant_stage.shake_delta;
                 plant_obj.shake_freq = plant_stage.shake_freq;
+                plant_obj.can_bounce = plant_stage.can_bounce;
+                plant_obj.bounce_delta = plant_stage.bounce_delta;
 
                 // deactivate inactive stages for newly spawned plant_obj
                 int k = 0;
@@ -277,7 +333,7 @@ namespace Plant {
                     for (int t = 0; t < stages[stage_index].types; ++t) {
                         w_range.Add(t);
                         w_range.Add(t);
-                        w_range.Add(stages[stage_index].sprt_probs[t] * 100);
+                        w_range.Add(stages[stage_index].sprite_probs[t] * 100);
                     }
                     int type_index = (int) Utils.weightedRange(w_range.ToArray());
                     // set stage_obj

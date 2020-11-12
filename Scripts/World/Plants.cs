@@ -120,7 +120,7 @@ public static class Plants {
         PlantObj debri = initPlant("pebble_tile", obj);
         debri.spawn_order = 0;
         // Stage 0
-        PlantStage ps = new PlantStage(1, 1, 6, 1.0f, new int[] { 4, 5, 23, 24, 25, 43 }, new float[] { 0.167f, 0.167f, 0.167f, 0.167f, 0.167f, 0.167f }, true);
+        PlantStage ps = new PlantStage(1, 1, 6, new int[] { 4, 5, 23, 24, 25, 43 }, new float[] { 0.167f, 0.167f, 0.167f, 0.167f, 0.167f, 0.167f }, true);
         // first three are random, fourth follows tall_grass placement
         ps.initNoise(new int[] { 0, 100, 200, 0 }, new float[] { 1.0f, 1.0f, 1.0f, 1.0f }, new float[] { 0.0f, 0.8f, 0.6f, 0.6f }, new float[] { 0.001f, 0.5f, 0.2f, 0.5f });
         debri.AddStage(0, ps);
@@ -132,13 +132,13 @@ public static class Plants {
         PlantObj tallgrass = initPlant("tall_grass", obj);
         tallgrass.spawn_order = 1;
         // Stage 0
-        ps = new PlantStage(1, 1, 2, 0.4f, new int[] { 46, 47 }, new float[] { 0.5f, 0.5f });
+        ps = new PlantStage(1, 1, 2, new int[] { 46, 47 }, new float[] { 0.5f, 0.5f });
         ps.initNoise(new int[] { 0 }, new float[] { 1.0f }, new float[] { 0.65f }, new float[] { 0.8f });
         ps.initBoxCollider(true, Vector3.zero, Vector3.one);
         ps.initShake();
         tallgrass.AddStage(0, ps);
         // Stage 2
-        ps = new PlantStage(1, 2, 2, 0.4f, new int[] { 68, 48, 69, 49 }, new float[] { 0.5f, 0.5f });
+        ps = new PlantStage(1, 2, 2, new int[] { 68, 48, 69, 49 }, new float[] { 0.5f, 0.5f });
         ps.initNoise(new int[] { 25 }, new float[] { 0.3f }, new float[] { 0.78f }, new float[] { 0.9f });
         ps.initBoxCollider(true, Vector3.zero, Vector3.one);
         ps.initShake(0.5f);
@@ -156,13 +156,13 @@ public static class Plants {
         flower.XY_neighbors = false;
         flower.spawn_order = 1;
         // Stage 0
-        ps = new PlantStage(1, 1, 1, 1.0f, new int[] { 6 }, new float[] { 1.0f }, true);
+        ps = new PlantStage(1, 1, 1, new int[] { 6 }, new float[] { 1.0f }, true);
         ps.initNoise(new int[] { 560 }, new float[] { 3.0f }, new float[] { 0.85f }, new float[] { 0.05f });
         ps.initBoxCollider(true, new Vector3(-0.02f, -0.02f, 0f), new Vector3(0.4f, 0.45f, 0.1f));
         ps.initShake();
         flower.AddStage(0, ps);
         // Stage 1
-        ps = new PlantStage(1, 1, 1, 1.0f, new int[] { 10 }, new float[] { 1.0f });
+        ps = new PlantStage(1, 1, 1, new int[] { 10 }, new float[] { 1.0f });
         ps.initNoise(new int[] { 60 }, new float[] { 1.0f }, new float[] { 0.8f }, new float[] { 0.1f });
         ps.initBoxCollider(true, Vector3.zero, Vector3.one * 0.3f);
         ps.initShake();
@@ -176,7 +176,7 @@ public static class Plants {
         flower_tile.spawn_order = 0;
         flower_tile.XY_neighbors = false;
         // Stage 0
-        ps = new PlantStage(1, 1, 4, 1.0f, new int[] { 61, 62, 81, 82 }, new float[] { 0.25f, 0.25f, 0.25f, 0.25f }, true);
+        ps = new PlantStage(1, 1, 4, new int[] { 61, 62, 81, 82 }, new float[] { 0.25f, 0.25f, 0.25f, 0.25f }, true);
         ps.initNoise(new int[] { 560, 60 }, new float[] { 3.0f, 1.0f }, new float[] { 0.9f, 0.8f }, new float[] { 1.0f, 0.7f });
         flower_tile.AddStage(0, ps);
         // Obj Pool
@@ -188,32 +188,36 @@ public static class Plants {
         mushroom.XY_neighbors = false;
         mushroom.spawn_order = 1;
         // Stage 0
-        ps = new PlantStage(1, 1, 1, 1.0f, new int[] { 26 }, new float[] { 1.0f }, true);
+        ps = new PlantStage(1, 1, 1, new int[] { 26 }, new float[] { 1.0f }, true);
         ps.initNoise(new int[] { 20 }, new float[] { 2.0f }, new float[] { 0.9f }, new float[] { 0.05f });
         ps.initCapsuleCollider(false, Vector3.zero, 2, 0.5f, 0.1f);
         ps.initCapsuleCollider(true, Vector3.zero, 2, 0.6f, 0.15f);
         ps.initShake();
         mushroom.AddStage(0, ps);
         // Stage 1
-        ps = new PlantStage(1, 1, 2, 1.0f, new int[] { 27, 28 }, new float[] { 0.5f, 0.5f });
+        ps = new PlantStage(1, 1, 2, new int[] { 27, 28 }, new float[] { 0.5f, 0.5f });
         ps.initNoise(new int[] { 10, 95 }, new float[] { 2.0f, 1.0f }, new float[] { 0.9f, 0.8f }, new float[] { 0.05f, 0.05f });
         ps.initCapsuleCollider(false, Vector3.zero, 2, 2f, 0.4f);
         ps.initCapsuleCollider(true, Vector3.zero, 2, 2f, 0.45f);
         ps.initShake(0.5f);
+        ps.initBounce();
         mushroom.AddStage(1, ps);
         // Stage 2
-        ps = new PlantStage(1, 2, 2, 1.0f, new int[] { 126, 106, 127, 107 }, new float[] { 0.5f, 0.5f });
+        ps = new PlantStage(1, 2, 2, new int[] { 126, 106, 127, 107 }, new float[] { 0.5f, 0.5f });
         ps.initNoise(new int[] { 32 }, new float[] { 2.0f }, new float[] { 0.9f }, new float[] { 0.05f });
         ps.initCapsuleCollider(false, Vector3.zero, 2, 2.5f, 0.4f);
         ps.initCapsuleCollider(true, Vector3.zero, 2, 2.5f, 0.45f);
         ps.initShake(0.5f);
+        ps.initBounce();
         mushroom.AddStage(2, ps);
         // Stage 3
-        ps = new PlantStage(2, 2, 1, 1.0f, new int[] { 128, 129, 108, 109 }, new float[] { 0.5f, 0.5f });
+        ps = new PlantStage(2, 2, 1, new int[] { 128 }, new float[] { 0.5f }, false, false, true);
+        // ps = new PlantStage(2, 2, 1, new int[] { 128, 129, 108, 109 }, new float[] { 0.5f });
         ps.initNoise(new int[] { 45 }, new float[] { 2.0f }, new float[] { 0.9f }, new float[] { 0.05f });
         ps.initCapsuleCollider(false, Vector3.zero, 2, 3f, 0.8f);
         ps.initCapsuleCollider(true, Vector3.zero, 2, 3f, 0.85f);
-        ps.initShake(0.25f);
+        ps.initShake(0.35f);
+        ps.initBounce();
         mushroom.AddStage(3, ps);
         // Obj Pool
         ObjPool.Add(obj, 20);
@@ -224,7 +228,7 @@ public static class Plants {
         mushroom_tile.spawn_order = 0;
         mushroom_tile.XY_neighbors = false;
         // Stage 0
-        ps = new PlantStage(1, 1, 2, 1.0f, new int[] { 60, 80 }, new float[] { 0.5f, 0.5f }, true);
+        ps = new PlantStage(1, 1, 2, new int[] { 60, 80 }, new float[] { 0.5f, 0.5f }, true);
         ps.initNoise(new int[] { 20, 10, 95, 32, 45 }, new float[] { 2.0f, 2.0f, 1.0f, 2.0f, 2.0f },
                     new float[] { 0.87f, 0.87f, 0.77f, 0.87f, 0.87f }, new float[] { 0.2f, 0.2f, 0.2f, 0.2f, 0.2f });
         mushroom_tile.AddStage(0, ps);

@@ -101,7 +101,6 @@ public static class Terrain {
                     createRidgeCollider(i, j, new Vector2Int(x, y), z);
                 }
                 i++;
-
             }
             j++;
         }
@@ -287,7 +286,7 @@ public static class Terrain {
 
     public static void createMergedCollider(float init_x, float init_y, int init_i, int init_j, int z) {
         BoxCollider new_collider;
-        int i = init_i + 1, j = init_j;
+        int i = init_i, j = init_j;
         int mask = map[init_i, init_j].mask[z];
         float[] c_type;
         if (!collider_types.TryGetValue(mask, out c_type)) c_type = new float[] { 0f, 0f, 1f, 1f };
@@ -313,6 +312,7 @@ public static class Terrain {
         Vector2 expected_init = new Vector2(true_init_x + x_size, true_init_y);
         Vector2 current_cell = new Vector2(init_x + 1, init_y);
         int x_count = 1;
+        i++;
 
         // if the next collider is not already in the merge map we can proceed
 

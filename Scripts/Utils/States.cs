@@ -34,5 +34,6 @@ public enum States {
     ON_FIRE,
     FROZEN,
     SHAKE,
+    BOUNCE,
 
 }

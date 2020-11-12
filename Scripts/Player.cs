@@ -109,13 +109,12 @@ public class Player : MonoEvent {
         face_anim = face_sprt_obj.AddComponent<Animator>();
         face_anim.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("PlayerFaceAnimator");
 
-        transform.position += Vector3.back * 50.0f;
+        transform.position += Vector3.back * 10.0f;
 
         localScale = transform.localScale;
     }
 
-    public override void load()
-    {
+    public override void load() {
         PlayerSave player_save = getActiveSave().player_save;
         position = player_save.position;
         health = player_save.health;
@@ -338,11 +337,18 @@ public class Player : MonoEvent {
     }
 
     public void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.layer == 10) {
-            int z = (int)char.GetNumericValue(collision.gameObject.name[collision.gameObject.name.Length - 1]);
+        GameObject col_obj = collision.gameObject;
+        if (col_obj.layer == 10) {
+            int z = (int)char.GetNumericValue(col_obj.name[col_obj.name.Length - 1]);
             ridge_height = z * -TilemapManager.LEVEL_HEIGHT;
             on_ridge = true;
             ridge_count++;
+        } else if (col_obj.tag == "Plant") {
+            if (col_obj.transform.position.z > transform.position.z) {
+                if (col_obj.transform.parent.parent.gameObject.GetComponent<Plant.PlantObj>().bounce()) {
+                    rb.AddForce(Vector3.back * 20f, ForceMode.VelocityChange);
+                }
+            }
         }
     }
 
