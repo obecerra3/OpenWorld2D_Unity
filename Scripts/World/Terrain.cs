@@ -81,7 +81,6 @@ public static class Terrain {
     }
 
     public static void loadPhysics() {
-        top_left = new Vector2Int(current_map_center.x - CHUNK_WIDTH / 2, current_map_center.y - CHUNK_HEIGHT / 2);
         int i = 0, j = 0, z = 0;
         GameObject ground_obj;
         GameObject ridge_obj;

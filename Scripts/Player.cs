@@ -19,7 +19,7 @@ public class Player : MonoEvent {
     public const int PLAYER_HEIGHT = 5;
     public const float WALK_SPEED = 4f;
     public const float RUN_SPEED = 6f;
-    public const float ROLL_SPEED = 8f;
+    public const float ROLL_SPEED = 12f;
     public const float IN_AIR_SPEED = 3f;
     public const float JUMP_FORCE = -15f;
     public const float DIAG_MULT = 0.7f;
@@ -250,7 +250,9 @@ public class Player : MonoEvent {
         }
     }
 
-    public override void onNotify(Notifications _notification, List<object> _data) {}
+    public void onNotify(Notifications _notification, List<object> _data) {
+
+    }
 
     //==============
     //   HELPERS
@@ -323,7 +325,7 @@ public class Player : MonoEvent {
     public void OnTriggerEnter(Collider collider) {
         switch (collider.gameObject.tag) {
             case ("Plant"):
-                collider.gameObject.transform.parent.transform.parent.GetComponent<Plant.PlantObj>().shake();
+                collider.gameObject.transform.parent.transform.parent.GetComponent<Plants.PlantObj>().shake();
                 break;
         }
     }
@@ -331,7 +333,7 @@ public class Player : MonoEvent {
     public void OnTriggerExit(Collider collider) {
         switch (collider.gameObject.tag) {
             case ("Plant"):
-                collider.gameObject.transform.parent.transform.parent.GetComponent<Plant.PlantObj>().shake();
+                collider.gameObject.transform.parent.transform.parent.GetComponent<Plants.PlantObj>().shake();
                 break;
         }
     }
@@ -345,7 +347,7 @@ public class Player : MonoEvent {
             ridge_count++;
         } else if (col_obj.tag == "Plant") {
             if (col_obj.transform.position.z > transform.position.z) {
-                if (col_obj.transform.parent.parent.gameObject.GetComponent<Plant.PlantObj>().bounce()) {
+                if (col_obj.transform.parent.parent.gameObject.GetComponent<Plants.PlantObj>().bounce()) {
                     rb.AddForce(Vector3.back * 20f, ForceMode.VelocityChange);
                 }
             }

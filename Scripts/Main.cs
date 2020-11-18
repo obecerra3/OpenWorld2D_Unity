@@ -15,7 +15,7 @@ public class Main : MonoBehaviour
     void Start()
     {
         //set the RNG seed
-        Random.InitState(69);
+        Random.InitState(42);
 
         //read save data
         loadGame();

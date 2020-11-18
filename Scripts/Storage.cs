@@ -9,8 +9,8 @@ public static class Storage {
     public static Save[] saves = new Save[3];
     public static bool data_exists;
 
-    public static void saveGame(Player _player, World _world) {
-        Save save = new Save(_player, _world);
+    public static void saveGame(Player player, World world) {
+        Save save = new Save(player, world);
         BinaryFormatter bf = new BinaryFormatter();
         if (!Directory.Exists(Application.persistentDataPath + "/saves/")) {
             Directory.CreateDirectory(Application.persistentDataPath + "/saves/");

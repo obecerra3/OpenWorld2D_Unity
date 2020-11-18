@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public abstract class MonoEvent : MonoObserverSubject {
+public abstract class MonoEvent : ObserverPattern.MonoObserverSubject {
     public string next_event;
     public States current_state;
 

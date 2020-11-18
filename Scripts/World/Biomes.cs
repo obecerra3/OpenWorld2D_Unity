@@ -4,57 +4,64 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using static Utils;
 using static TilemapManager;
-using static Plants;
 
-public static class Biomes {
+namespace Biomes {
 
-    //==============
-    // Data
-    //==============
-    public static int[,] biome_map;
-    public static Dictionary<int, Biome> biome_ids = new Dictionary<int, Biome>();
-    public static Biome grasslands;
+    public static class BiomeSpawn {
+        public static int[,] biome_map;
+        public static Dictionary<int, BiomeData> biome_ids = new Dictionary<int, BiomeData>();
+        public static BiomeData grasslands;
 
-    //==============
-    // Initialize
-    //==============
-    public static void initialize() {
-        biome_map = new int[CHUNK_WIDTH, CHUNK_HEIGHT];
+        //==============
+        // Initialize
+        //==============
+        public static void initialize() {
+            biome_map = new int[CHUNK_WIDTH, CHUNK_HEIGHT];
 
-        initBiomeTypes();
-    }
+            initBiomeTypes();
+        }
 
-    //==============
-    // Load
-    //==============
-    public static void load() {
-        fillMap();
-    }
+        public static void initBiomeTypes() {
+            grasslands = new BiomeData("grasslands");
+            grasslands.plants = new List<string> {
+                "pebble_tile", "tall_grass", "grass", "grass_tile", "flower",
+                "flower_tile", "mushroom", "mushroom_tile"
+            };
+        }
 
-    //==============
-    // Reload
-    //==============
-    public static void reload() {
-        // load new resources
-        load();
-    }
+        //==============
+        // Load
+        //==============
+        public static void load() {
+            fillMap();
+        }
 
-    //================
-    // Helpers
-    //================
-    public static void fillMap() {
-        for (int y = 0; y < biome_map.GetLength(1); y++) {
-            for (int x = 0; x < biome_map.GetLength(0); x++) {
-                biome_map[x, y] = grasslands.ID;
+        public static void fillMap() {
+            for (int y = 0; y < biome_map.GetLength(1); y++) {
+                for (int x = 0; x < biome_map.GetLength(0); x++) {
+                    biome_map[x, y] = grasslands.ID;
+                }
             }
+        }
+
+        //==============
+        // Reload
+        //==============
+        public static void reload() {
+            // load new resources
+            load();
         }
     }
 
-    public static void initBiomeTypes() {
-        grasslands = new Biome("grasslands");
-        grasslands.plants = new List<string> {
-            "pebble_tile", "tall_grass", "grass", "grass_tile", "flower",
-            "flower_tile", "mushroom", "mushroom_tile"
-        };
+    public class BiomeData {
+        public string name;
+        public int ID;
+        public List<string> plants;
+
+        public BiomeData(string n) {
+            name = n;
+            ID = Utils.getID(name);
+            BiomeSpawn.biome_ids.Add(ID, this);
+        }
     }
 }

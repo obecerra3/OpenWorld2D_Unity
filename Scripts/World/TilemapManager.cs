@@ -20,7 +20,6 @@ public class MapTile {
 }
 
 public static class TilemapManager {
-
     //===========
     // Sprites
     //============
@@ -29,18 +28,18 @@ public static class TilemapManager {
     //=====================
     // Rendering Variables
     //=====================
-    public static GameObject parent_obj;
     public static Vector2Int current_map_center;
     public static Vector2Int top_left;
+    public static GameObject parent_obj;
 
     //==============
     // Constants
     //==============
     public const int MAX_LEVEL = 5;
     public const float LEVEL_HEIGHT = 3f;             // height between tilemaps/ height of colliders
-    public const int CHUNK_WIDTH = 100;
-    public const int CHUNK_HEIGHT = 100;
-    public const int MAP_UPDATE_DISTANCE = 50;
+    public const int CHUNK_WIDTH = 50;
+    public const int CHUNK_HEIGHT = 50;
+    public const int MAP_UPDATE_DISTANCE = 12;
 
     //==============
     // Map
@@ -83,8 +82,7 @@ public static class TilemapManager {
         // raise tilemaps z placement
         // --------------------------
         int i = 0;
-        foreach (Tilemap t in tilemaps)
-        {
+        foreach (Tilemap t in tilemaps) {
             t.gameObject.transform.position = new Vector3(0, 0, -i * LEVEL_HEIGHT);
             i++;
         }
@@ -97,22 +95,14 @@ public static class TilemapManager {
                 map[x, y] = new MapTile(MAX_LEVEL);
             }
         }
-
-        // Initialize WorldEngines
-        // -----------------------
-        Terrain.initialize();
-        Biomes.initialize();
-        Plants.initialize();
     }
 
     //==============
     // Load
     //==============
     public static void load() {
-        // call load functions of WorldEngines
-        Terrain.load();
-        Biomes.load();
-        Plants.load();
+        current_map_center = new Vector2Int();
+        top_left = new Vector2Int(current_map_center.x - CHUNK_WIDTH / 2, current_map_center.y - CHUNK_HEIGHT / 2);
     }
 
     //==============
@@ -121,16 +111,12 @@ public static class TilemapManager {
     public static void reload(Vector2Int c) {
         // update map center
         current_map_center = c;
+        top_left = new Vector2Int(current_map_center.x - CHUNK_WIDTH / 2, current_map_center.y - CHUNK_HEIGHT / 2);
 
         // clear tilemaps' tiles
         foreach(Tilemap t in tilemaps) {
             t.ClearAllTiles();
         }
-
-        // reload other WorldEngines
-        Terrain.reload();
-        Biomes.reload();
-        Plants.reload();
 
         // render once done
         render();
@@ -141,7 +127,6 @@ public static class TilemapManager {
     //==============
     public static void render() {
         // assign values to the TileMap
-        top_left = new Vector2Int(current_map_center.x - CHUNK_WIDTH / 2, current_map_center.y - CHUNK_HEIGHT / 2);
         int i = 0;
         int j = 0;
 
@@ -169,10 +154,10 @@ public static class TilemapManager {
     //==============
     // Helpers
     //==============
-    public static void checkPlayerPosition(Vector2Int new_position) {
-        // if (L1(current_map_center, new_position) >= MAP_UPDATE_DISTANCE) {
-        //     Debug.Log("here");
-        //     reload(new_position);
-        // }
+    public static bool checkPlayerPosition(Vector2Int new_position) {
+        if (L1(current_map_center, new_position) >= MAP_UPDATE_DISTANCE) {
+            return true;
+        }
+        return false;
     }
 }

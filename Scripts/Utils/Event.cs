@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public abstract class Event : ObserverSubject
+public abstract class Event : ObserverPattern.ObserverSubject
 {
     public string next_event;
     public States current_state;

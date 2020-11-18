@@ -25,6 +25,7 @@ public class GameScreen : Event
         player.load();
         world.load();
         player.addObserver(world);
+        world.addObserver(player);
     }
 
     public override void enable() {
@@ -47,7 +48,7 @@ public class GameScreen : Event
         world.disable();
     }
 
-    public override void onNotify(Notifications _notification, List<object> _data) {
+    public void onNotify(Notifications _notification, List<object> _data) {
 
     }
 

@@ -35,7 +35,7 @@ public class TitleScreen : Event
         //hide and disable ui
     }
 
-    public override void onNotify(Notifications _notification, List<object> _data)
+    public void onNotify(Notifications _notification, List<object> _data)
     {
         //determine current_state
         switch(current_state)
